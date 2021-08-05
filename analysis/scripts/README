@@ -1,0 +1,17 @@
+plot.p : 
+    This file is used for plotting the output graphs for density vs time. The variables to this program are 
+	infile (string, specifies the name of the file which contains time in first column and density values in second problem)
+	outfile (string, specifies the name of the output file)
+	mname (string, specifies the method)
+    Usage: gnuplot -e 'infile="output.txt"; outfile = "out.png"; mname = "Method 1"' plot.p
+utility.cpp : 
+    This file is used for finding utility given two output files. It takes in two arguments;
+        name of method's output file
+        name of baseline output file
+    Usage: $  g++ -o myprogram utility.cpp `pkg-config --cflags --libs opencv4`
+           $ ./myprogram outputfile1 outputfile2
+plotg.p : 
+     This file is used for plotting the utility vs time graph. The variables to this program are 
+	infile (string, specifies the name of the file which contains method in first column, time in second column and utility values in second problem)
+	outfile (string, specifies the name of the output file)
+     Usage: gnuplot -e 'infile="ut.txt"; outfile = "utility_time.png"' plotg.p

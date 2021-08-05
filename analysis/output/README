@@ -1,0 +1,8 @@
+output1.txt: output for method 1 
+output2.txt: output for method 2 
+output3.txt: output for method 3 
+output4.txt: output for method 4 
+output5.txt: output for method 5
+outbase1.txt: output for baseline for methods 1-4 
+outbase2.txt: output for baseline for method 5
+ut.txt: utility and time taken for each method

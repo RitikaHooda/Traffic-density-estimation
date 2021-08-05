@@ -1,0 +1,5 @@
+Method1 28.09 .925
+Method2 55.94 .8895
+Method3 28.03 .950
+Method4 203 .800
+Baseline 57.399 1

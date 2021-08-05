@@ -1,0 +1,3 @@
+To use, $ make
+	$ ./myprogram 'file-location' 
+where file-location is the location of the source image. The program saves the output in the same folder.  
