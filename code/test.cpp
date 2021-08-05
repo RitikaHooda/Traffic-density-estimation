@@ -5,16 +5,13 @@
 #include <string>
 #include "opencv2/highgui.hpp"
 #include <chrono>
-//#include <queue>
-//#include <boost/circular_buffer.hpp>
-//#include <cassert>
 using namespace std;
 using namespace cv;
 
 
-int queue_density_main( Mat image){   //processing at 5 fps
+int queue_density_main( Mat image, string test_video){   //processing at 5 fps
     
-  VideoCapture cap("trafficvideo.mp4");
+  VideoCapture cap(test_video);
   Mat background = image;
   cvtColor(background,background, COLOR_BGR2GRAY);
   Mat previous = background;
@@ -86,10 +83,9 @@ int queue_density_main( Mat image){   //processing at 5 fps
   return 0;
 }
 
-int Method1( Mat image,int N){  //processing at 5 fps
+int Method1( Mat image,int N,  string test_video){  //processing at 5 fps
  
-   // int count =0;
-  VideoCapture cap("trafficvideo.mp4");
+  VideoCapture cap(test_video);
   
   Mat background = image;
   cvtColor(background,background, COLOR_BGR2GRAY);
@@ -139,19 +135,13 @@ int Method1( Mat image,int N){  //processing at 5 fps
         absdiff(dest,background,out);
        
         threshold(out,out,50,255,THRESH_BINARY);
-       
-        //imshow( "Frame1", out );
-        
+              
         
         vector<vector<Point> > contours;
         vector<Vec4i> hierarchy;
         findContours( out, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-        //cout<<contours.size()<<endl;
         k =contours.size();
         
-       // cout<<count<<endl;
-       
-       //outfile<<count<<" "<<contours.size()/1000.0<<" "<<contours0.size()/500.0<<endl;
         outfile<<double(count)/5<<" "<<contours.size()/1000.0<<endl;
         i++;
         char c=(char)waitKey(10);
@@ -177,8 +167,8 @@ int Method1( Mat image,int N){  //processing at 5 fps
 }
 
 
-int Method2( Mat image, int x, int y){ //processing at 5 fps
-  VideoCapture cap("trafficvideo.mp4");
+int Method2( Mat image, int x, int y,  string test_video){ //processing at 5 fps
+  VideoCapture cap(test_video);
   
   Mat background = image;
   cvtColor(background,background, COLOR_BGR2GRAY);
@@ -203,7 +193,6 @@ int Method2( Mat image, int x, int y){ //processing at 5 fps
    
     cap >> frame;
     
-   // resize(frame, frame, Size(200, 600), 0, 0, INTER_CUBIC);
     if (frame.empty())
       break;
     
@@ -227,17 +216,12 @@ int Method2( Mat image, int x, int y){ //processing at 5 fps
      resize(background, background, Size(x, y), 0, 0, INTER_CUBIC);
     absdiff(dest,background,out);
    
-    threshold(out,out,50,255,THRESH_BINARY);
-   
-    //imshow( "Frame1", out );
-    
+    threshold(out,out,50,255,THRESH_BINARY);    
     
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     findContours( out, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-    //cout<<contours.size()<<endl;
     count++;
-   //outfile<<count<<" "<<contours.size()/1000.0<<" "<<contours0.size()/500.0<<endl;
     outfile<<double(count)/5<<" "<<contours.size()/1000.0<<endl;
     
     char c=(char)waitKey(10);
@@ -281,12 +265,11 @@ void *Process_Frame(void *structure_of_process_frame_object ){
     pthread_exit(NULL);
 }
  
-int  Method3( Mat image, int N){ //processing at 5 fps
+int  Method3( Mat image, int N,  string test_video){ //processing at 5 fps
    
-    VideoCapture cap("trafficvideo.mp4");
+    VideoCapture cap(test_video);
     Mat background = image;
     cvtColor(background,background, COLOR_BGR2GRAY);//background is gray
-    //Mat previous = background;
    
     if(!cap.isOpened()){
       cout << "Error opening video stream or file" << endl;
@@ -416,7 +399,6 @@ void *Process_(void *object2){
    
     
     int count = 0;
-    //if(th)
     if(thread_num>0){
     for(int i =0;i<3*thread_num;i++ ){
         cap >> frame;
@@ -457,17 +439,13 @@ void *Process_(void *object2){
       absdiff(dest,background,out);
      
       threshold(out,out,50,255,THRESH_BINARY);
-     
-      //imshow( "Frame1", out );
-      
+        
       
       vector<vector<Point> > contours;
       vector<Vec4i> hierarchy;
       findContours( out, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-      //cout<<contours.size()<<endl;
-        queue_density=contours.size();
+      queue_density=contours.size();
       count++;
-      //cout << count<< " " << queue_density/1000.0<< endl;
         *(my_structure2->outfile) << double(count)/5 << " " << queue_density /1000.0<< endl;
         for(int i =0;i<3*total_thread -1;i++ ){
             cap >>frame;
@@ -479,10 +457,7 @@ void *Process_(void *object2){
 
         }
         
-      
-     //outfile<<count<<" "<<contours.size()/1000.0<<" "<<contours0.size()/500.0<<endl;
-     // outfile<<count<<" "<<contours.size()/1000.0<<endl;
-      
+            
       char c=(char)waitKey(10);
       if(c==27)
         break;
@@ -491,13 +466,11 @@ void *Process_(void *object2){
     
     cap.release();
     destroyAllWindows();
-   // *(my_structure2->outfile).close();
-   // return;
    return 0;
 }
 
 
-void Method4(int N,Mat image){ //processing at 5fps
+void Method4(int N,Mat image,  string test_video){ //processing at 5fps
     int rc;
     ofstream outfile("output4.txt");
    
@@ -506,7 +479,7 @@ void Method4(int N,Mat image){ //processing at 5fps
   
     
     for(int i =0;i<N;i++){
-        my_structure2[i].file = "trafficvideo.mp4";
+        my_structure2[i].file = test_video;
         my_structure2[i].background = image;
         my_structure2[i].thread_num = i;
         my_structure2[i].total_thread = N;
@@ -538,10 +511,10 @@ Mat process(Mat image){
 
 }
 
-void method5(string method) //extra credit problem, processing at 3 fps
+void method5(string method, string test_video) //extra credit problem, processing at 3 fps
 {
 
-  VideoCapture cap("trafficvideo.mp4");
+  VideoCapture cap(test_video);
   if(!cap.isOpened()){
     cout << "Error opening video stream or file" << endl;
     return;
@@ -621,20 +594,21 @@ void method5(string method) //extra credit problem, processing at 3 fps
 } 
 int main(int argc, char* argv[]){
     Mat image = imread(argv[1]);
-    //
+    string test_video = argv[2];
+ 
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
     auto t1 = high_resolution_clock::now();
-    //queue_density_main(image);
-    //Method1(image, 10);
-    //Method2(image, 400, 600);
-    //Method3(image,10);
-    //method5("dense");
-    //method5("sparse");
-    Method4(10,image);
+    //queue_density_main(image,  test_video);
+    //Method1(image, 10, test_video );
+    //Method2(image, 400, 600,  test_video);
+    //Method3(image,10,  test_video);
+    //method5("dense",  test_video);
+    //method5("sparse",  test_video);
+    Method4(10,image,  test_video);
     auto t2 = high_resolution_clock::now();
 
     /* Getting number of milliseconds as an integer. */
@@ -643,39 +617,5 @@ int main(int argc, char* argv[]){
     /* Getting number of milliseconds as a double. */
     duration<double, std::milli> ms_double = t2 - t1;
 
-    std::cout << ms_double.count()/1000 << " s"<<endl;
-    
-    
+    std::cout << ms_double.count()/1000 << " s"<<endl;    
 }
-
-
-
- 
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
